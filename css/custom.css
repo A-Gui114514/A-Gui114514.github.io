@@ -137,52 +137,72 @@ body {
   transform: translateY(-0.06em);
 }
 
-/* 房间节点 */
+/* 房间热区：不可见，只负责点击和悬停 */
 #article-container .map-node {
   position: absolute;
   transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1px;
-  padding: 6px 14px;
-  color: #2a2118;
-  text-decoration: none;
-  border-radius: 4px;
-  transition: color 0.25s ease, background 0.25s ease;
+  display: block;
+  padding: 0;
+  border-radius: 6px;
+  background: transparent;
+  outline-offset: 6px;
 }
 
-#article-container .map-node i {
-  font-size: 14px;
+#article-container .map-node:focus-visible {
+  outline: 2px dashed #8c2f22;
+}
+
+/* 悬停时房间地面被烛光洗亮 */
+.map-art .wash {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.map-art .wash.lit {
   opacity: 0.55;
-  transition: opacity 0.25s ease;
 }
 
-#article-container .map-node .n-name {
-  font-family: 'Songti SC', 'SimSun', 'Noto Serif SC', serif;
-  font-size: clamp(13px, 1.5vw, 19px);
-  letter-spacing: 0.24em;
-  text-indent: 0.24em;
-  line-height: 1.35;
-  white-space: nowrap;
-  border-bottom: 1px solid transparent;
-  padding-bottom: 1px;
-  transition: border-color 0.25s ease;
+/* ---------- 图例（Ⅰ–Ⅳ） ---------- */
+.map-key {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.8rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
 }
 
-#article-container .map-node .n-count {
-  font-size: 10.5px;
-  letter-spacing: 0.14em;
-  opacity: 0.5;
+.map-key li a {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  color: var(--font-color);
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
 }
 
-#article-container .map-node:hover {
+.map-key b {
+  font-family: 'Songti SC', 'SimSun', serif;
+  font-weight: 400;
   color: #8c2f22;
-  background: rgba(140, 47, 34, 0.06);
+  font-size: 0.95rem;
 }
 
-#article-container .map-node:hover i {
-  opacity: 1;
+.map-key span {
+  font-family: 'Songti SC', 'SimSun', serif;
+  letter-spacing: 0.14em;
+}
+
+.map-key em {
+  font-style: normal;
+  color: var(--card-meta);
+  font-size: 0.76rem;
+  letter-spacing: 0.05em;
+}
+
+.map-key li a:hover span {
+  color: #c8a24a;
 }
 
 /* ---------- 雾、火光、灯池 ---------- */
@@ -376,24 +396,68 @@ body {
   text-indent: 0;
 }
 
-.panel-list {
+.panel-main {
   flex: 1;
-  margin: 0.4rem 0 0;
-  padding: 0;
-  list-style: none;
+  min-height: 0;
+  margin-top: 0.45rem;
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
   scrollbar-color: rgba(42, 33, 24, 0.35) transparent;
 }
 
-.panel-list::-webkit-scrollbar {
+.panel-main::-webkit-scrollbar {
   width: 6px;
 }
 
-.panel-list::-webkit-scrollbar-thumb {
+.panel-main::-webkit-scrollbar-thumb {
   background: rgba(42, 33, 24, 0.3);
   border-radius: 3px;
+}
+
+.panel-story {
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid rgba(42, 33, 24, 0.18);
+  font-size: 0.84rem;
+  line-height: 1.95;
+  color: #4a3a26;
+}
+
+.panel-story p {
+  margin: 0.55em 0;
+  text-indent: 2em;
+}
+
+.panel-story h2 {
+  margin: 0 0 0.7rem;
+  padding: 0;
+  border: none;
+  font-family: 'Songti SC', 'SimSun', serif;
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: #6b5233;
+}
+
+.panel-story h2::before {
+  display: none;
+}
+
+.panel-story em {
+  color: #6b5233;
+}
+
+.panel-story strong {
+  color: #2a2118;
+}
+
+.panel-list {
+  flex: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: visible;
 }
 
 .panel-list li {
@@ -406,36 +470,74 @@ body {
 
 .panel-list a {
   display: flex;
-  align-items: baseline;
-  gap: 1rem;
-  padding: 0.52rem 0.15rem;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 0.6rem 0.15rem;
   color: #2a2118;
-  font-size: 0.94rem;
-  transition: color 0.2s ease, padding-left 0.25s ease;
 }
 
-.panel-list a span {
+.panel-list .p-cover {
+  flex: 0 0 84px;
+  height: 56px;
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid rgba(42, 33, 24, 0.28);
+  background: rgba(42, 33, 24, 0.05);
+}
+
+.panel-list .p-cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: sepia(0.18) contrast(0.96);
+  transition: transform 0.4s ease;
+}
+
+.panel-list a:hover .p-cover img {
+  transform: scale(1.06);
+}
+
+.panel-list .p-body {
   flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+}
+
+.panel-list b {
+  font-family: 'Songti SC', 'SimSun', serif;
+  font-size: 0.94rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-.panel-list a time {
+.panel-list em {
+  font-style: normal;
   font-size: 0.76rem;
+  line-height: 1.55;
   color: #6b5233;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.panel-list time {
+  font-size: 0.7rem;
+  color: #8a7458;
   font-variant-numeric: tabular-nums;
 }
 
-.panel-list a:hover {
+.panel-list a:hover b {
   color: #8c2f22;
-  padding-left: 0.45rem;
-}
-
-.panel-list a:hover span {
   text-decoration: underline;
   text-decoration-thickness: 1px;
-  text-underline-offset: 4px;
+  text-underline-offset: 3px;
 }
 
 .panel-empty {
@@ -757,4 +859,245 @@ body {
     padding: 0.36rem 0.75rem;
     font-size: 0.8rem;
   }
+}
+
+/* ==========================================================================
+   开局展开的羊皮卷（内容取自《客房与羊皮卷》）
+   ========================================================================== */
+.scroll-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.scroll-intro.open {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.scroll-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 5, 4, 0.74);
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+
+.scroll-intro.open .scroll-backdrop {
+  opacity: 1;
+}
+
+.scroll-paper {
+  position: relative;
+  width: min(640px, 100%);
+  color: #2a2118;
+  background: #efe1c2 url('/images/parchment.webp') center / cover no-repeat;
+  filter: drop-shadow(0 26px 60px rgba(0, 0, 0, 0.62));
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 0.78s cubic-bezier(0.22, 0.8, 0.28, 1);
+}
+
+.scroll-body {
+  max-height: 78vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 34px 42px 30px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(42, 33, 24, 0.4) transparent;
+}
+
+.scroll-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scroll-body::-webkit-scrollbar-thumb {
+  background: rgba(42, 33, 24, 0.32);
+  border-radius: 3px;
+}
+
+/* 上下两根卷轴木杆 */
+.scroll-rod {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  height: 13px;
+  border-radius: 7px;
+  background: linear-gradient(180deg, #7d5e38, #3a2917 42%, #6b4f2e 72%, #241a10);
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.14) inset;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.scroll-rod.top {
+  top: 6px;
+}
+
+.scroll-rod.bottom {
+  bottom: 6px;
+}
+
+.scroll-intro.open .scroll-paper {
+  clip-path: inset(0 0 0 0);
+}
+
+.scroll-close {
+  position: absolute;
+  top: 24px;
+  right: 18px;
+  width: 1.9rem;
+  height: 1.9rem;
+  display: grid;
+  place-items: center;
+  font-size: 1rem;
+  line-height: 1;
+  color: #f2e8d0;
+  background: #8c2f22;
+  border: none;
+  border-radius: 50%;
+  z-index: 4;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+}
+
+.scroll-close:hover {
+  transform: rotate(90deg);
+  background: #a23b2b;
+}
+
+.scroll-content {
+  font-size: 0.95rem;
+  line-height: 2;
+}
+
+.scroll-content p {
+  margin: 0.85em 0;
+  text-indent: 2em;
+}
+
+.scroll-content h2 {
+  margin: 0 0 1.1rem;
+  padding: 0;
+  border: none;
+  font-family: 'Songti SC', 'SimSun', serif;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: #6b5233;
+}
+
+.scroll-content h2::before {
+  display: none;
+}
+
+.scroll-content a {
+  color: #8c2f22;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.scroll-content em {
+  color: #6b5233;
+}
+
+/* ---------- 文章预览列表：左右交替，只有标题带下划线 ---------- */
+.panel-list li:nth-child(even) a {
+  flex-direction: row-reverse;
+}
+
+#article-container .panel-list a,
+#article-container .panel-list a:hover {
+  text-decoration: none;
+}
+
+#article-container .panel-list a:hover b {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* 房间面板：结尾那几句「离开」的话，放在列表之后 */
+.panel-outro {
+  margin-top: 0.5rem;
+  padding-top: 0.85rem;
+  border-top: 1px dashed rgba(42, 33, 24, 0.22);
+  font-size: 0.84rem;
+  line-height: 1.95;
+  color: #6b5233;
+}
+
+.panel-outro p {
+  margin: 0.4em 0;
+  text-indent: 2em;
+}
+
+.panel-outro em {
+  color: #6b5233;
+}
+
+.panel-outro strong {
+  color: #2a2118;
+  font-weight: 600;
+}
+
+/* 面板标题兼作入口，不再是按钮 */
+#article-container .panel-head h3 a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.22s ease;
+}
+
+#article-container .panel-head h3 a:hover {
+  border-bottom-color: rgba(140, 47, 34, 0.5);
+}
+
+#article-container .panel-foot {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* 羊皮卷开头那句引子：第一次展开才出现 */
+.scroll-lead {
+  margin: 0 0 1.15rem;
+  font-family: 'Songti SC', 'SimSun', serif;
+  font-style: italic;
+  font-size: 0.98rem;
+  line-height: 1.9;
+  color: #6b5233;
+}
+
+.scroll-lead em {
+  color: #6b5233;
+}
+
+.scroll-paper.no-lead .scroll-lead {
+  display: none;
+}
+
+/* 侧栏里「标签」那个计数入口也一并收起 */
+#sidebar-menus .site-data a[href="/tags/"] {
+  display: none;
+}
+
+/* 羊皮卷展开也尊重「减少动态」 */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-paper {
+    transition: none !important;
+  }
+}
+
+/* 羊皮纸上的动作描写改成深棕 */
+#article-container .scroll-content em,
+#article-container .scroll-lead em,
+#article-container .scroll-content .scroll-lead {
+  color: #4e3419;
+}
+
+.scroll-lead {
+  color: #4e3419;
 }
